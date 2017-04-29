@@ -39,11 +39,12 @@ Public key:
 ```
 
 ## Installation
-Install the package
-`go get github.com/themotu/sshez`
+sudo bash -c "curl -L https://github.com/themotu/sshez/releases/download/latest/sshez-amd64 -o /usr/local/bin/sshez" && sudo chmod +x /usr/local/bin/sshez
 
 Install it for your user (bash or zsh):
 `sshez install`
+
+The above will require you to log out and log back in our to "source" your rc file until you log out: `source .bashrc` or `source .zshrc`
 
 ## Settings
 TODO: key types, folder name scheme, collision detecion for alias, check for alias in install, check for sshez in alias, prompt for config file creation and ssh folder, promt for remove password auth on server, bug with aliases
