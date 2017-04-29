@@ -1,7 +1,9 @@
 # sshez
 A simple ssh config and key automation tool.
 
-This isn't by any means a replacement for ssh. It still uses the standard ssh client. It simply checks to see if an alias exists. If it doesn't it creates it and generates you a key.
+This isn't by any means a replacement for ssh. It still uses the standard ssh client. It simply checks to see if an alias and key exist in your config. If it doesn't it creates it and generates you a key and sets up the alias for you.
+
+The benefit is you have a clean concise way os generating a new key per server. I find it's far too easy to just re-use a key and this allows me to have a new key per server with very little effort.
 
 
 ## Usage
@@ -40,11 +42,12 @@ Public key:
 Install the package
 `go get github.com/themotu/sshez`
 
-Install it for your user:
-`sshez install ~/.bashrc` or for zsh `sshez install ~/.zshrc`
+Install it for your user (bash or zsh):
+`sshez install`
 
 ## Settings
-TODO: key types, folder name scheme, collision detecion for alias, check for alias in install, check for sshez in alias, prompt for config file creation and ssh folder, promt for remove password auth on server
+TODO: key types, folder name scheme, collision detecion for alias, check for alias in install, check for sshez in alias, prompt for config file creation and ssh folder, promt for remove password auth on server, bug with aliases
 
 ## Technical details
 
+By default we are using the ed25519 key type introduced in ssh 6.5. You can change this in the settings file. Elliptic-curve Diffie Hellman in Daniel Bernstein's Curve25519offers better security than ECDSA and DSA as well as good performance. You may change this in the settings file in .ssh/sshez.conf
