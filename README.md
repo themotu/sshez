@@ -80,7 +80,18 @@ After running this command you will be able to ssh without a password to mysite.
 ```
 
 ## Installation
+
+For 64-bit linux:
+
 `sudo bash -c "curl -L https://github.com/themotu/sshez/releases/download/latest/sshez-amd64 -o /usr/local/bin/sshez" && sudo chmod +x /usr/local/bin/sshez`
+
+Other OSes:
+
+change the above sshez-amd64 to any of:
+
+* `sshez-386` for 32-bit linux
+* `sshez-arm` for raspberry pi or other arm devices
+* `sshez-osx` for Mac OSX
 
 Install it for your user (bash or zsh):
 `sshez install`
@@ -104,4 +115,4 @@ Post 1.0:
 
 ## Technical details
 
-By default we are using the ed25519 key type introduced in ssh 6.5. You can change this in the settings file. Elliptic-curve Diffie Hellman in Daniel Bernstein's Curve25519offers better security than ECDSA and DSA as well as good performance. You may change this in the settings file in .ssh/sshez.conf
+By default we are using the ed25519 key type introduced in ssh 6.5. You can change this in the settings file. Elliptic-curve Diffie Hellman in Daniel Bernstein's Curve25519 offers better security than ECDSA and DSA as well as good performance. You may change this in the settings file in .ssh/sshez.conf
