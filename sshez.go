@@ -337,7 +337,14 @@ func main() {
 	}
 
 	if checkAlias(fA) || checkNick(fA) {
+		// os.Exit(0)
 		if checkAlias(fA) && !checkNick(fA) {
+			// check if we are copying the key for the first time and let it do it's thing
+			if strings.Contains(strings.Join(os.Args[2:], ","), `mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys`) {
+				command := strings.Join(os.Args[1:], " ")
+				runCommand("ssh", command)
+				os.Exit(0)
+			}
 			fmt.Println("That Hostname is in your config but using a different alias AKA host.")
 			fmt.Println("This will be added in 1.1 meanwhile you should modify the config file or remember the alias you used.")
 			os.Exit(0)

@@ -74,10 +74,17 @@ Use this to view key instructions for passwordless ssh to host
 ssh copy mysite.mydomain.com
 Run the following command and your key will be copied to the remote server. I suggest you then disable password login.
 
-cat ~/.ssh/mysite.mydomain.com/ed25519.pub | ssh mysite.mydomain.com 'mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys' 2>/dev/null 
+cat ~/.ssh/mysite.mydomain.com/ed25519.pub | ssh mysite.mydomain.com 'mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys' 2>/dev/null
 
 After running this command you will be able to ssh without a password to mysite.mydomain.com
 ```
+
+*currently copy instructions don't account for the username or the port, you'll want to adjust accordingly*
+
+E.g (assuming port 444 and user myuser):
+
+`cat ~/.ssh/mysite.mydomain.com/ed25519.pub | ssh -p444 myuser@mysite.mydomain.com 'mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys' 2>/dev/null`
+
 
 ## Installation
 
@@ -106,6 +113,7 @@ TODO:
 * add version
 * add help
 * prompt for config file creation and ssh folder
+* copy needs to give proper user and port
 
 Post 1.0:
 * actually copy key to server instead of giving user command
