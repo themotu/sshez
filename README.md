@@ -96,9 +96,11 @@ TODO:
 * add version
 * add help
 * prompt for config file creation and ssh folder
+
 Post 1.0:
 * actually copy key to server instead of giving user command
 * prompt for remove password auth on server
+* additional services (github accounts, aws api, etc.)
 
 ## Technical details
 
