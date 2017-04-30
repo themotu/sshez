@@ -1,5 +1,5 @@
 # sshez
-A simple ssh config and key automation tool.
+A simple ssh config and key automation tool for individual server keys and passwordless ssh.
 
 This isn't by any means a replacement for ssh. It still uses the standard ssh client. It simply checks to see if an alias and key exist in your config. If it doesn't it creates it and generates you a key and sets up the alias for you.
 
@@ -8,38 +8,79 @@ The benefit is you have a clean concise way os generating a new key per server. 
 
 ## Usage
 
-With domain:
+### Setting up a domain
+(after running install, otherwise you'll have to use `sshez` instead of `ssh`)
 ```
 ssh mysite.mydomain.com
 
-It looks like mysite.mydomain.com isn't in your config file. Would you like to add it now and generate a new key for it? (Y/n): y
+created folder /home/myuser/.ssh/mysite.mydomain.com
+Generating public/private ed25519 key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/myuser/.ssh/mysite.mydomain.com/ed25519.
+Your public key has been saved in /home/myuser/.ssh/mysite.mydomain.com/ed25519.pub.
+The key fingerprint is:
+SHA256:Tl+Qn2yO4thplSZb51S02Q34s+W1+5SOOOfREinRVps myuser@blue-steel
+The key's randomart image is:
++--[ED25519 256]--+
+|             . . |
+|           .o + o|
+|          o. = E.|
+|           +o.B =|
+|        S  o*+ =o|
+|       o..==+ +.o|
+|        o*o+.o oo|
+|       +oo .o.=o |
+|      ..+  .+o .o|
++----[SHA256]-----+
+mysite.mydomain.com added
 
-Passphrase? (Y/n): n
+An ssh 'Hostname' AKA nickname is used for helping to remember a host. You will only need to run: 'ssh nickname' and will be able to connect
 
-A new key has been generated at ~/.ssh/mysite.mydomain.com/id_rsa
+Do you want an ssh nickname? [y/n]: 
+
+What user will you ssh with?: myuser
+
+What Port?[22]: 
+
+Updated config file with the following:
+
+host mysite.mydomain.com
+	Hostname mysite.mydomain.com
+	User myuser
+	Port 22
+	Identityfile ~/.ssh/mysite.mydomain.com/ed25519
+	IdentitiesOnly yes
+	TCPKeepAlive yes
+	ServerAliveInterval 120
+Run the following command and your key will be copied to the remote server. I suggest you then disable password login.
+
+cat ~/.ssh/mysite.mydomain.com/ed25519.pub | ssh mysite.mydomain.com 'mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys' 2>/dev/null 
+
+After running this command you will be able to ssh without a password to mysite.mydomain.com
+```
+### View public key:
+```
+ssh pub mysite.mydomain.com
+
+Public key for mysite.mydomain.com:
+
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE30fImlS0BliJ1xyAydhbXsPbG7vxpMNLh2g0to0FxW myuser@blue-steel
 ```
 
-With IP:
+### View copy instruction:
+Use this to view key instructions for passwordless ssh to host
 ```
-ssh 172.17.0.1
+ssh copy mysite.mydomain.com
+Run the following command and your key will be copied to the remote server. I suggest you then disable password login.
 
-It looks like 172.17.0.1 isn't in your config file. Would you like to add it now and generate a new key for it? (Y/n/advanced): y
+cat ~/.ssh/mysite.mydomain.com/ed25519.pub | ssh mysite.mydomain.com 'mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys' 2>/dev/null 
 
-Passphrase? (Y/n): n
-
-What alias would you like to use for 172.17.0.1?: myserver
-
-A new pub/private key has been generated at ~/.ssh/myserver/id_rsa
-```
-
-```
-sshez pub mysite.mydomain.com
-Public key:
-<public key>
+After running this command you will be able to ssh without a password to mysite.mydomain.com
 ```
 
 ## Installation
-sudo bash -c "curl -L https://github.com/themotu/sshez/releases/download/latest/sshez-amd64 -o /usr/local/bin/sshez" && sudo chmod +x /usr/local/bin/sshez
+`sudo bash -c "curl -L https://github.com/themotu/sshez/releases/download/latest/sshez-amd64 -o /usr/local/bin/sshez" && sudo chmod +x /usr/local/bin/sshez`
 
 Install it for your user (bash or zsh):
 `sshez install`
@@ -47,7 +88,17 @@ Install it for your user (bash or zsh):
 The above will require you to log out and log back in our to "source" your rc file until you log out: `source .bashrc` or `source .zshrc`
 
 ## Settings
-TODO: key types, folder name scheme, collision detecion for alias, check for alias in install, check for sshez in alias, prompt for config file creation and ssh folder, promt for remove password auth on server, bug with aliases
+TODO: 
+* key types (config)
+* folder name scheme(config)
+* collision detecion for alias(fix nickname/alias issue)
+* check for alias in install
+* add version
+* add help
+* prompt for config file creation and ssh folder
+Post 1.0:
+* actually copy key to server instead of giving user command
+* prompt for remove password auth on server
 
 ## Technical details
 

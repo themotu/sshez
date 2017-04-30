@@ -187,7 +187,7 @@ func createConfig(path string, host string, userHome string) {
 	fmt.Print("\nWhat user will you ssh with?: ")
 	fmt.Scanln(&user)
 
-	fmt.Println("\nWhat Port?[22]: ")
+	fmt.Print("\nWhat Port?[22]: ")
 	fmt.Scanln(&port)
 
 	HostToAdd := configUpdate{nickname, host, user, uint16(port), identityfile, IdentitiesOnly, TCPKeepAlive, uint32(ServerAliveInterval)}
@@ -253,7 +253,7 @@ func copyKey(host string) {
 	params := fmt.Sprintf("cat ~/.ssh/%s/%s.pub | ssh %s 'mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys' 2>/dev/null \n", host, keyType, host)
 	fmt.Print("Run the following command and your key will be copied to the remote server. I suggest you then disable password login.\n\n")
 	fmt.Println(params)
-	fmt.Println(fmt.Sprintf("After running this command you will be able to ssh without a key to %s", host))
+	fmt.Println(fmt.Sprintf("After running this command you will be able to ssh without a password to %s", host))
 	os.Exit(0)
 }
 
