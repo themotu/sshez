@@ -3,7 +3,7 @@ A simple ssh config and key automation tool for individual server keys and passw
 
 This isn't by any means a replacement for ssh. It still uses the standard ssh client. It simply checks to see if an alias and key exist in your config. If it doesn't it creates it and generates you a key and sets up the alias for you.
 
-The benefit is you have a clean concise way os generating a new key per server. I find it's far too easy to just re-use a key and this allows me to have a new key per server with very little effort.
+The benefit is you have a clean concise way of generating a new key per server. I find it's far too easy to just re-use a key and this allows me to have a new key per server with very little effort.
 
 
 ## Usage
@@ -102,7 +102,6 @@ The above will require you to log out and log back in our to "source" your rc fi
 TODO: 
 * key types (config)
 * folder name scheme(config)
-* collision detecion for alias(fix nickname/alias issue)
 * check for alias in install
 * add version
 * add help

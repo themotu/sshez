@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"regexp"
 	"strings"
 	"text/template"
 )
@@ -134,6 +135,59 @@ func checkAlias(alias string) bool {
 	return strings.Contains(s, alias)
 }
 
+func checkNick(nick string) bool {
+	user := getUser()
+	if _, err := os.Stat(user["config"]); os.IsNotExist(err) {
+		//prompt to make directory and/or file
+	}
+
+	f, err := ioutil.ReadFile(user["config"])
+	if err != nil {
+		//mkfile here
+	}
+
+	regexstr := fmt.Sprintf(`(?m)^(g?)host\s%s$`, nick)
+
+	re, err := regexp.Compile(regexstr)
+	if err != nil {
+		fmt.Println("There was an issue with that nickname, try again.")
+		return true
+	}
+
+	match := re.MatchString(string(f))
+
+	if match {
+		return true
+	}
+	return false
+
+}
+
+func grabNick(host string) string {
+	var nickname string
+	//nicknameQ while true
+	fmt.Println("\nAn ssh 'Hostname' AKA nickname is used for helping to remember a host. You will only need to run: 'ssh nickname' and will be able to connect")
+	for {
+		nick := yN("\nDo you want an ssh nickname?")
+		if nick {
+			fmt.Print("Enter nickname E.g mycoolazurehost, uberbox, tehcloud, etc. : ")
+			fmt.Scanln(&nickname)
+
+			if nickname == "" {
+				fmt.Println(fmt.Sprintf("\nApparently you're not with the whole \"nickname program\" so we are using %s", host))
+				nickname = host
+			}
+			if !checkNick(nickname) {
+				return nickname
+			} else {
+				fmt.Println("That nickname is already in use.")
+			}
+		} else {
+			nickname = host
+		}
+	}
+}
+
 type configUpdate struct {
 	Host                string
 	Hostname            string
@@ -159,7 +213,6 @@ host {{.Host}}
 func createConfig(path string, host string, userHome string) {
 	keyType := "ed25519"
 	//do regex here to see if host is an ipv4 or ipv6
-	var nickname string
 	var user string
 	var port uint16
 	identityfile := fmt.Sprintf("~/.ssh/%s/%s", host, keyType)
@@ -168,21 +221,8 @@ func createConfig(path string, host string, userHome string) {
 	ServerAliveInterval := 120
 
 	port = 22
-	//nicknameQ while true
-	fmt.Println("\nAn ssh 'Hostname' AKA nickname is used for helping to remember a host. You will only need to run: 'ssh nickname' and will be able to connect")
-	nick := yN("\nDo you want an ssh nickname?")
 
-	if nick {
-		fmt.Print("Enter nickname E.g mycoolazurehost, uberbox, tehcloud, etc. : ")
-		fmt.Scanln(&nickname)
-
-		if nickname == "" {
-			fmt.Println(fmt.Sprintf("\nApparently you're not with the whole \"nickname program\" so we are using %s", host))
-			nickname = host
-		}
-	} else {
-		nickname = host
-	}
+	nickname := grabNick(host)
 
 	fmt.Print("\nWhat user will you ssh with?: ")
 	fmt.Scanln(&user)
@@ -258,13 +298,28 @@ func copyKey(host string) {
 }
 
 func main() {
-	if len(os.Args) == 2 && os.Args[1] == "install" {
+	var fA string
+
+	if len(os.Args) > 1 {
+		fA = os.Args[1]
+	} else {
+		// if they're just typing ssh let them, poor souls...
+		cmd := exec.Command("ssh")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		cmd.Run()
+		os.Exit(0)
+	}
+
+	if len(os.Args) == 2 && fA == "install" {
 		install()
 		os.Exit(0)
 	}
 
 	if len(os.Args) == 3 { // ssh update hostname == 3
-		switch os.Args[1] {
+		switch fA {
 		case "update":
 			updateHost()
 			os.Exit(0)
@@ -275,17 +330,23 @@ func main() {
 		case "copy":
 			copyKey(os.Args[2])
 			os.Exit(0)
+		case "nick":
+			checkNick(os.Args[2])
+			os.Exit(0)
 		}
 	}
 
-	if checkAlias(os.Args[1]) {
+	if checkAlias(fA) || checkNick(fA) {
+		if checkAlias(fA) && !checkNick(fA) {
+			fmt.Println("That Hostname is in your config but using a different alias AKA host.")
+			fmt.Println("This will be added in 1.1 meanwhile you should modify the config file or remember the alias you used.")
+			os.Exit(0)
+		}
 		command := strings.Join(os.Args[1:], " ")
 		runCommand("ssh", command)
-		// fmt.Println("\nUmm... Dude? That host is in there...")
-		// os.Exit(0)
 	} else {
-		createHost(os.Args[1])
-		copyKey(os.Args[1])
+		createHost(fA)
+		copyKey(fA)
 	}
 
 }
